@@ -30,9 +30,16 @@ For Each file In fso.GetFolder(scriptDir).Files
             ' Format the file name and folder path.
             Dim firstColumnValue : firstColumnValue = items(0)
             Dim dateTimeValue : dateTimeValue = Split(items(1), " ") ' Split date and time.
-            Dim dateValue : dateValue = Replace(dateTimeValue(0), "-", "")
-            folderPath = scriptDir & "\" & dateValue
-            newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & ".csv"
+            
+            ' For file name
+            Dim fileDateValue : fileDateValue = Replace(dateTimeValue(0), "-", "")
+
+            ' For folder name
+            Dim dateParts : dateParts = Split(dateTimeValue(0), "-")
+            Dim folderDateValue : folderDateValue = dateParts(1) & dateParts(2) ' or use dateParts(2) for "19"
+
+            folderPath = scriptDir & "\" & folderDateValue
+            newFilePath = folderPath & "\" & fileDateValue & "_" & firstColumnValue & ".csv"
     
             ' Create the folder if it doesn't exist.
             If Not fso.FolderExists(folderPath) Then
