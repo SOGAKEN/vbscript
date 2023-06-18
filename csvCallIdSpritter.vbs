@@ -43,8 +43,8 @@ For Each file In fso.GetFolder(scriptDir).Files
             Dim newFile
             If Not data.Exists(newFilePath) Then
                 Set newFile = fso.CreateTextFile(newFilePath, True)
-                data.Add(newFilePath, newFile)
-                newFile.WriteLine Join(headers, ",")
+                data.Add newFilePath, newFile
+                newFile.WriteLine(Join(headers, ","))
             Else
                 Set newFile = data(newFilePath)
             End If
