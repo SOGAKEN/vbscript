@@ -34,10 +34,12 @@ For Each file In fso.GetFolder(scriptDir).Files
             folderPath = scriptDir & "\" & dateValue
             newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue
             Dim counter : counter = 0
-            While fso.FileExists(newFilePath & If(counter = 0, "", "_" & counter) & ".csv")
+            Dim suffix : suffix = ""
+            While fso.FileExists(newFilePath & suffix & ".csv")
                 counter = counter + 1
+                suffix = "_" & counter
             Wend
-            newFilePath = newFilePath & If(counter = 0, "", "_" & counter) & ".csv"
+            newFilePath = newFilePath & suffix & ".csv"
     
             ' Create the folder if it doesn't exist.
             If Not fso.FolderExists(folderPath) Then
