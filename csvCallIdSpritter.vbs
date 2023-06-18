@@ -32,38 +32,28 @@ For Each file In fso.GetFolder(scriptDir).Files
             Dim dateTimeValue : dateTimeValue = Split(items(1), " ") ' Split date and time.
             Dim dateValue : dateValue = Replace(dateTimeValue(0), "-", "")
             folderPath = scriptDir & "\" & dateValue
-            newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & ".csv"
-            
-            ' If the file already exists, add a counter to the filename.
-            Dim counter : counter = 1
-            While fso.FileExists(newFilePath)
-                newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & "_" & counter & ".csv"
+            newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue
+            Dim counter : counter = 0
+            While fso.FileExists(newFilePath & If(counter = 0, "", "_" & counter) & ".csv")
                 counter = counter + 1
             Wend
-            
+            newFilePath = newFilePath & If(counter = 0, "", "_" & counter) & ".csv"
+    
             ' Create the folder if it doesn't exist.
             If Not fso.FolderExists(folderPath) Then
                 fso.CreateFolder(folderPath)
             End If
-            
+    
             ' Add the line to the appropriate file.
             Dim newFile
-            If Not data.Exists(newFilePath) Then
-                Set newFile = fso.CreateTextFile(newFilePath, True)
-                data.Add newFilePath, newFile
-                newFile.WriteLine(Join(headers, ","))
-            Else
-                Set newFile = data(newFilePath)
-            End If
+            Set newFile = fso.CreateTextFile(newFilePath, True)
+            newFile.WriteLine(Join(headers, ","))
             newFile.WriteLine line
+            newFile.Close
         Loop
-        
+    
         ' Clean up.
         ts.Close
-        Dim key
-        For Each key In data
-            data(key).Close
-        Next
     End If
 Next
 
