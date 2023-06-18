@@ -1,4 +1,3 @@
-
 Option Explicit
 
 Dim fso, ts, line, headers, data, folderPath, newFilePath
@@ -60,3 +59,6 @@ For Each file In fso.GetFolder(scriptDir).Files
         Next
     End If
 Next
+
+' Display a completion message.
+MsgBox "Completed."
