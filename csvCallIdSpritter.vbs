@@ -1,4 +1,3 @@
-
 Option Explicit
 
 Dim fso, ts, line, headers, data, folderPath, newFilePath
@@ -39,13 +38,19 @@ For Each file In fso.GetFolder(scriptDir).Files
             If Not fso.FolderExists(folderPath) Then
                 fso.CreateFolder(folderPath)
             End If
-    
+
             ' Add the line to the appropriate file.
             Dim newFile
+            Dim counter : counter = 1
+            Dim originalFilePath : originalFilePath = newFilePath
+            While fso.FileExists(newFilePath) ' Check if file already exists
+                newFilePath = Left(originalFilePath, InStrRev(originalFilePath, ".") - 1) & "_" & counter & ".csv"
+                counter = counter + 1
+            Wend
             If Not data.Exists(newFilePath) Then
                 Set newFile = fso.CreateTextFile(newFilePath, True)
-                data.Add(newFilePath, newFile)
-                newFile.WriteLine Join(headers, ",")
+                data.Add newFilePath, newFile
+                newFile.WriteLine(Join(headers, ","))
             Else
                 Set newFile = data(newFilePath)
             End If
