@@ -1,6 +1,6 @@
 Option Explicit
 
-Dim fso, ts, line, headers, data, folderPath, newFilePath
+Dim fso, ts, line, headers, data, folderPath, newFilePath, counter
 Set fso = CreateObject("Scripting.FileSystemObject")
 
 Dim file
@@ -33,8 +33,8 @@ For Each file In fso.GetFolder(scriptDir).Files
             Dim dateValue : dateValue = Replace(dateTimeValue(0), "-", "")
             folderPath = scriptDir & "\" & dateValue
             newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue
-            Dim counter : counter = 0
             Dim suffix : suffix = ""
+            counter = 1
             While fso.FileExists(newFilePath & suffix & ".csv")
                 counter = counter + 1
                 suffix = "_" & counter
@@ -44,6 +44,15 @@ For Each file In fso.GetFolder(scriptDir).Files
             ' Create the folder if it doesn't exist.
             If Not fso.FolderExists(folderPath) Then
                 fso.CreateFolder(folderPath)
+            End If
+    
+            ' Check if the value already exists in the dictionary.
+            If Not data.Exists(firstColumnValue) Then
+                ' Add the value to the dictionary.
+                data.Add firstColumnValue, newFilePath
+            Else
+                ' The value already exists, so append a number to the file name.
+                newFilePath = data.Item(firstColumnValue) & "_" & counter & ".csv"
             End If
     
             ' Add the line to the appropriate file.
