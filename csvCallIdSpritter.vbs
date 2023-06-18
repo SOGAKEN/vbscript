@@ -29,13 +29,15 @@ For Each file In fso.GetFolder(scriptDir).Files
     
             ' Format the file name and folder path.
             Dim firstColumnValue : firstColumnValue = items(0)
-            folderPath = scriptDir & "\" & firstColumnValue
-            Dim counter : counter = 1
-            newFilePath = folderPath & "\" & firstColumnValue & ".csv"
+            Dim dateTimeValue : dateTimeValue = Split(items(1), " ") ' Split date and time.
+            Dim dateValue : dateValue = Replace(dateTimeValue(0), "-", "")
+            folderPath = scriptDir & "\" & dateValue
+            newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & ".csv"
             
             ' If the file already exists, add a counter to the filename.
+            Dim counter : counter = 1
             While fso.FileExists(newFilePath)
-                newFilePath = folderPath & "\" & firstColumnValue & "_" & counter & ".csv"
+                newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & "_" & counter & ".csv"
                 counter = counter + 1
             Wend
             
@@ -46,9 +48,13 @@ For Each file In fso.GetFolder(scriptDir).Files
             
             ' Add the line to the appropriate file.
             Dim newFile
-            Set newFile = fso.CreateTextFile(newFilePath, True)
-            data.Add newFilePath, newFile
-            newFile.WriteLine(Join(headers, ","))
+            If Not data.Exists(newFilePath) Then
+                Set newFile = fso.CreateTextFile(newFilePath, True)
+                data.Add newFilePath, newFile
+                newFile.WriteLine(Join(headers, ","))
+            Else
+                Set newFile = data(newFilePath)
+            End If
             newFile.WriteLine line
         Loop
         
@@ -60,3 +66,6 @@ For Each file In fso.GetFolder(scriptDir).Files
         Next
     End If
 Next
+
+' Display a completion message.
+MsgBox "Completed."
