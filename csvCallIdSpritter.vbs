@@ -29,34 +29,29 @@ For Each file In fso.GetFolder(scriptDir).Files
     
             ' Format the file name and folder path.
             Dim firstColumnValue : firstColumnValue = items(0)
-            Dim dateTimeValue : dateTimeValue = Split(items(1), " ") ' Split date and time.
-            Dim dateValue : dateValue = Replace(dateTimeValue(0), "-", "")
-            folderPath = scriptDir & "\" & dateValue
-            newFilePath = folderPath & "\" & dateValue & "_" & firstColumnValue & ".csv"
-    
+            folderPath = scriptDir & "\" & firstColumnValue
+            Dim counter : counter = 1
+            newFilePath = folderPath & "\" & firstColumnValue & ".csv"
+            
+            ' If the file already exists, add a counter to the filename.
+            While fso.FileExists(newFilePath)
+                newFilePath = folderPath & "\" & firstColumnValue & "_" & counter & ".csv"
+                counter = counter + 1
+            Wend
+            
             ' Create the folder if it doesn't exist.
             If Not fso.FolderExists(folderPath) Then
                 fso.CreateFolder(folderPath)
             End If
-
+            
             ' Add the line to the appropriate file.
             Dim newFile
-            Dim counter : counter = 1
-            Dim originalFilePath : originalFilePath = newFilePath
-            While fso.FileExists(newFilePath) ' Check if file already exists
-                newFilePath = Left(originalFilePath, InStrRev(originalFilePath, ".") - 1) & "_" & counter & ".csv"
-                counter = counter + 1
-            Wend
-            If Not data.Exists(newFilePath) Then
-                Set newFile = fso.CreateTextFile(newFilePath, True)
-                data.Add newFilePath, newFile
-                newFile.WriteLine(Join(headers, ","))
-            Else
-                Set newFile = data(newFilePath)
-            End If
+            Set newFile = fso.CreateTextFile(newFilePath, True)
+            data.Add newFilePath, newFile
+            newFile.WriteLine(Join(headers, ","))
             newFile.WriteLine line
         Loop
-    
+        
         ' Clean up.
         ts.Close
         Dim key
