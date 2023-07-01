@@ -15,7 +15,7 @@ const (
 )
 
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
 	// テストデータ生成
 	data := make([][]string, numRows+1)
@@ -32,7 +32,7 @@ func main() {
 		}
 
 		// ランダムな日付
-		date := randomDate(startYear, endYear)
+		date := randomDate(startYear, endYear, r)
 
 		// ランダムな内容
 		content := fmt.Sprintf("test%d", i)
@@ -53,7 +53,7 @@ func main() {
 }
 
 // randomDate returns a random date string between startYear and endYear.
-func randomDate(startYear, endYear int) string {
+func randomDate(startYear, endYear int, r *rand.Rand) string {
 	start := time.Date(startYear, 1, 1, 0, 0, 0, 0, time.UTC)
 	end := time.Date(endYear, 12, 31, 23, 59, 59, 0, time.UTC)
 
