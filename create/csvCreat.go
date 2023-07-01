@@ -1,4 +1,4 @@
-package create
+package main
 
 import (
 	"encoding/csv"
@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	numRows   = 1000
+	numRows   = 10000000
 	startYear = 2020
 	endYear   = 2023
 )
